@@ -1,0 +1,301 @@
+.etapas-container {
+    flex: 1;
+    padding: 30px;
+    margin-left: 250px;
+    width: calc(100% - 350px);
+    min-height: 100vh;
+}
+
+.etapas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.etapas-titulo {
+    color: #031C30;
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.etapas-acoes {
+    display: flex;
+    gap: 15px;
+}
+
+.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.button-nova {
+    background: #005599;
+    color: white;
+}
+
+.button-nova:hover {
+    background: #2980b9;
+}
+
+.button-cancelar {
+    background: #005599;
+    color: white;
+}
+
+.button-cancelar:hover {
+    background: #2980b9;
+}
+
+.button-salvar {
+    background: #005599;
+    color: white;
+}
+
+.button-salvar:hover {
+    background: #2980b9;
+    color: white;
+}
+
+.acoes-etapa {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+}
+
+.button-acao {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: 'Jost', sans-serif;
+}
+
+.button-acao.iniciar {
+  background-color: #005599;
+  color: #fff;
+}
+
+.button-acao.iniciar:hover {
+  background-color: #2980b9;
+}
+
+.button-acao.finalizar {
+  background-color: #005599;
+  color: #fff;
+}
+
+.button-acao.finalizar:hover {
+  background-color: #2980b9;
+}
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #2ecc71;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  font-weight: 500;
+  z-index: 999;
+  animation: fadein 0.5s, fadeout 0.5s 2s;
+}
+
+.toast.error {
+  background-color: #e74c3c;
+}
+
+.filtros-container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.grupo-filtro {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.filtro-select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.lista-etapas {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 25px;
+}
+
+.titulo-secao {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.grade-etapas {
+    display: grid;
+    gap: 20px;
+}
+
+.cartao-etapa {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+.cartao-etapa:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.cabecalho-etapa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.nome-etapa {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.status-etapa {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-pendente {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-em-andamento {
+    background: #cce7ff;
+    color: #004085;
+}
+
+.status-finalizada {
+    background: #d4edda;
+    color: #155724;
+}
+
+.funcionarios-etapa {
+    margin-top: 15px;
+}
+
+.titulo-funcionarios {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 10px;
+}
+
+.lista-funcionarios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.badge-funcionario {
+    background: #f8f9fa;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    color: #495057;
+    border: 1px solid #dee2e6;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    animation: aparecer 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 20px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.fechar-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #7f8c8d;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
