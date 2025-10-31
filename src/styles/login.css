@@ -5,9 +5,9 @@
 }
 
 .logo-text {
-  width: 500px;
-  height: auto;
-  filter: brightness(1.1);
+    width: 500px;
+    height: auto;
+    filter: brightness(1.1);
 }
 
 .left-side {
@@ -41,7 +41,7 @@
 }
 
 .login-form label {
-     font-weight: 500;
+    font-weight: 500;
 }
 
 .login-form input {
@@ -53,7 +53,7 @@
 }
 
 .login-form input:hover {
-  outline: 2px solid #003366;
+    outline: 2px solid #003366;
 }
 
 .login-form button {

@@ -1,9 +1,9 @@
 import React from 'react'
 
-function gerenciarAeronaves() {
+function GerenciarAeronaves() {
   return (
     <div>gerenciarAeronaves</div>
   )
 }
 
-export default gerenciarAeronaves
+export default GerenciarAeronaves
