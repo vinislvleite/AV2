@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../styles/sidebar.css";
 
@@ -7,61 +7,74 @@ function SideBar() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const cargo = localStorage.getItem("cargo") || "Desconhecido";
+  const nome = "Vinícius Leite"; // futuramente pode vir do login
+
+  // 🔹 Define os menus por cargo
+  const menus = {
+    Administrador: [
+      { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
+      { id: "funcionarios", nome: "Gerenciar Funcionários", path: "/gerenciarFuncionarios" },
+      { id: "pecas", nome: "Gerenciar Peças", path: "/gerenciarPecas" },
+      { id: "etapas", nome: "Etapas de Produção", path: "/etapasProducao" },
+    ],
+    Engenheiro: [
+      { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
+      { id: "etapas", nome: "Etapas de Produção", path: "/etapasProducao" },
+    ],
+    Operador: [
+      { id: "pecas", nome: "Gerenciar Peças", path: "/gerenciarPecas" },
+      { id: "etapas", nome: "Etapas de Produção", path: "/etapasProducao" },
+    ],
+  };
+
+  const botoes = menus[cargo] || [];
+
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes("gerenciarAeronaves")) setActive("aeronaves");
+    else if (path.includes("gerenciarFuncionarios")) setActive("funcionarios");
+    else if (path.includes("gerenciarPecas")) setActive("pecas");
+    else if (path.includes("etapasProducao")) setActive("etapas");
+  }, [location]);
+
   const handleNavigation = (path, item) => {
     setActive(item);
     navigate(path);
   };
 
-  React.useEffect(() => {
-    const path = location.pathname;
-    if (path.includes("gerenciarAeronaves")) setActive("aeronaves");
-    else if (path.includes("gerenciarFuncionarios")) setActive("funcionarios");
-    else if (path.includes("gerenciarPecas")) setActive("pecas");
-    else if (path.includes("gerenciarTestes")) setActive("testes");
-  }, [location]);
+  const handleLogout = () => {
+    localStorage.removeItem("cargo");
+    navigate("/");
+  };
 
   return (
-    <div className='sidebar'>
-      <div className='perfil'>
-        <img src='/perfil_icon.png' alt='Ícone perfil' className='icon-usuario'></img>
-        <div className='perfil-info'>
-          <h3>Vinícius Leite</h3>
-          <p>Administrador</p>
+    <div className="sidebar">
+      <div className="perfil">
+        <img src="/perfil_icon.png" alt="Ícone perfil" className="icon-usuario" />
+        <div className="perfil-info">
+          <h3>{nome}</h3>
+          <p>{cargo}</p>
         </div>
-        <img 
-          src='/sair_icon.png' 
-          alt='Sair ícone' 
-          className='logout-icon'
-          onClick={() => navigate("/")}
+        <img
+          src="/sair_icon.png"
+          alt="Sair ícone"
+          className="logout-icon"
+          onClick={handleLogout}
           style={{ cursor: "pointer" }}
-        ></img>
+        />
       </div>
 
-      <div className='menu'>
-        <button 
-          className={active === "aeronaves" ? "active" : ""} 
-          onClick={() => handleNavigation("/gerenciarAeronaves", "aeronaves")}
-        >
-          Gerenciar Aeronaves
-        </button>
-        <button 
-          className={active === "funcionarios" ? "active" : ""} 
-          onClick={() => handleNavigation("/gerenciarFuncionarios", "funcionarios")}
-        >
-          Gerenciar Funcionários
-        </button>
-        <button 
-          className={active === "pecas" ? "active" : ""} 
-          onClick={() => handleNavigation("/gerenciarPecas", "pecas")}
-        >
-          Gerenciar Peças
-        </button>
-        <button 
-          className={active === "testes" ? "active" : ""} 
-          onClick={() => handleNavigation("/gerenciarTestes", "testes")}
-        >
-          Gerenciar Testes
-        </button>
+      <div className="menu">
+        {botoes.map((botao) => (
+          <button
+            key={botao.id}
+            className={active === botao.id ? "active" : ""}
+            onClick={() => handleNavigation(botao.path, botao.id)}
+          >
+            {botao.nome}
+          </button>
+        ))}
       </div>
     </div>
   );
