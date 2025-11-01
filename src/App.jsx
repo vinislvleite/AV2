@@ -4,6 +4,7 @@ import GerenciarAeronaves from "./pages/gerenciarAeronaves";
 import EtapasProducao from "./pages/etapasProducao";
 import MainLayout from "./components/layout";
 import GerenciarFuncionarios from "./pages/gerenciarFuncionarios";
+import GerenciarPecas from "./pages/gerenciarPecas";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/gerenciarAeronaves" element={<GerenciarAeronaves />} />
           <Route path="/etapasProducao" element={<EtapasProducao />} />
           <Route path="/gerenciarFuncionarios" element={<GerenciarFuncionarios />} />
+          <Route path="/gerenciarPecas" element={<GerenciarPecas />} />
         </Route>
       </Routes>
     </BrowserRouter>

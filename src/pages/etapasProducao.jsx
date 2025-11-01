@@ -1,82 +1,90 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/etapasProducao.css';
+import React, { useState, useEffect } from "react";
+import "../styles/etapasProducao.css";
+
 
 function EtapasProducao() {
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [filtroStatus, setFiltroStatus] = useState('todas');
+  const [filtroStatus, setFiltroStatus] = useState("todas");
 
   const [etapas, setEtapas] = useState(() => {
-    const salvas = localStorage.getItem('etapas');
+    const salvas = localStorage.getItem("etapas");
     return salvas
       ? JSON.parse(salvas)
       : [
           {
             id: 1,
-            nome: 'Montagem da Fuselagem',
-            status: 'em-andamento',
-            prazo: '2024-12-05',
-            aeronave: '1',
-            funcionarios: ['João Silva', 'Maria Santos', 'Pedro Costa'],
+            nome: "Montagem da Fuselagem",
+            status: "em-andamento",
+            prazo: "2024-12-05",
+            aeronave: "1",
+            funcionarios: ["João Silva", "Maria Santos"],
           },
           {
             id: 2,
-            nome: 'Instalação de Sistemas',
-            status: 'pendente',
-            prazo: '2024-12-10',
-            aeronave: '1',
-            funcionarios: ['Carlos Oliveira', 'Ana Rodrigues'],
+            nome: "Instalação de Sistemas",
+            status: "pendente",
+            prazo: "2024-12-10",
+            aeronave: "1",
+            funcionarios: ["João Silva"],
           },
           {
             id: 3,
-            nome: 'Testes de Qualidade',
-            status: 'finalizada',
-            prazo: '2024-11-30',
-            aeronave: '2',
-            funcionarios: ['Paula Lima', 'Ricardo Alves', 'Fernanda Souza'],
+            nome: "Testes de Qualidade",
+            status: "finalizada",
+            prazo: "2024-11-30",
+            aeronave: "2",
+            funcionarios: ["Maria Santos"],
           },
         ];
   });
 
   useEffect(() => {
-    localStorage.setItem('etapas', JSON.stringify(etapas));
+    localStorage.setItem("etapas", JSON.stringify(etapas));
   }, [etapas]);
 
   const [dadosFormulario, setDadosFormulario] = useState({
-    nome: '',
-    status: 'pendente',
-    prazo: '',
-    aeronave: '',
+    nome: "",
+    status: "pendente",
+    prazo: "",
+    aeronave: "",
     funcionarios: [],
   });
 
-  const funcionariosDisponiveis = [
-    'João Silva',
-    'Maria Santos',
-    'Pedro Costa',
-    'Carlos Oliveira',
-    'Ana Rodrigues',
-    'Paula Lima',
-    'Ricardo Alves',
-    'Fernanda Souza',
-  ];
+  const [funcionariosDisponiveis, setFuncionariosDisponiveis] = useState([]);
+  const [aeronavesDisponiveis, setAeronavesDisponiveis] = useState([]);
 
-  const aeronavesDisponiveis = [
-    { id: '1', modelo: 'Embraer E195-E2' },
-    { id: '2', modelo: 'Airbus A320neo' },
-  ];
+  useEffect(() => {
+    const atualizarListas = () => {
+      const salvosFunc = localStorage.getItem("funcionarios");
+      const salvosAero = localStorage.getItem("aeronaves");
+
+      setFuncionariosDisponiveis(
+        salvosFunc ? JSON.parse(salvosFunc).map((f) => f.nome) : []
+      );
+
+      setAeronavesDisponiveis(
+        salvosAero ? JSON.parse(salvosAero) : []
+      );
+    };
+
+    window.addEventListener("storage", atualizarListas);
+    atualizarListas();
+    return () => window.removeEventListener("storage", atualizarListas);
+  }, []);
 
   const adicionarEtapa = (novaEtapa) => {
     const etapa = {
       ...novaEtapa,
       id: etapas.length + 1,
+      aeronave: String(novaEtapa.aeronave),
     };
     setEtapas([...etapas, etapa]);
     setMostrarModal(false);
     setDadosFormulario({
-      nome: '',
-      status: 'pendente',
-      prazo: '',
-      aeronave: '',
+      nome: "",
+      status: "pendente",
+      prazo: "",
+      aeronave: "",
       funcionarios: [],
     });
   };
@@ -91,11 +99,10 @@ function EtapasProducao() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Regra de sequência lógica por aeronave
     const etapaEmAndamento = etapas.find(
       (etapa) =>
         etapa.aeronave === dadosFormulario.aeronave &&
-        etapa.status !== 'finalizada'
+        etapa.status !== "finalizada"
     );
 
     if (etapaEmAndamento) {
@@ -114,17 +121,23 @@ function EtapasProducao() {
     );
   };
 
+  const excluirEtapa = (id) => {
+    if (window.confirm("Tem certeza que deseja excluir esta etapa?")) {
+      setEtapas(etapas.filter((etapa) => etapa.id !== id));
+    }
+  };
+
   const getStatusTexto = (status) => {
     const mapaStatus = {
-      pendente: 'Pendente',
-      'em-andamento': 'Em Andamento',
-      finalizada: 'Finalizada',
+      pendente: "Pendente",
+      "em-andamento": "Em andamento",
+      finalizada: "Finalizada",
     };
     return mapaStatus[status] || status;
   };
 
   const etapasFiltradas =
-    filtroStatus === 'todas'
+    filtroStatus === "todas"
       ? etapas
       : etapas.filter((etapa) => etapa.status === filtroStatus);
 
@@ -172,9 +185,10 @@ function EtapasProducao() {
                 <strong>Prazo:</strong> {etapa.prazo}
               </p>
               <p>
-                <strong>Aeronave:</strong>{' '}
-                {aeronavesDisponiveis.find((a) => a.id === etapa.aeronave)
-                  ?.modelo || '—'}
+                <strong>Aeronave:</strong>{" "}
+                {aeronavesDisponiveis.find(
+                  (a) => String(a.id) === String(etapa.aeronave)
+                )?.modelo || "—"}
               </p>
 
               <div className="funcionarios-etapa">
@@ -191,29 +205,34 @@ function EtapasProducao() {
               </div>
 
               <div className="acoes-etapa">
-                {etapa.status === 'pendente' && (
+                {etapa.status === "pendente" && (
                   <button
                     className="button-acao iniciar"
-                    onClick={() => atualizarStatus(etapa.id, 'em-andamento')}
+                    onClick={() => atualizarStatus(etapa.id, "em-andamento")}
                   >
                     Iniciar
                   </button>
                 )}
-                {etapa.status === 'em-andamento' && (
+                {etapa.status === "em-andamento" && (
                   <button
                     className="button-acao finalizar"
-                    onClick={() => atualizarStatus(etapa.id, 'finalizada')}
+                    onClick={() => atualizarStatus(etapa.id, "finalizada")}
                   >
                     Finalizar
                   </button>
                 )}
+                <button
+                  className="button-acao excluir"
+                  onClick={() => excluirEtapa(etapa.id)}
+                >
+                  Excluir
+                </button>
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Modal */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -237,19 +256,6 @@ function EtapasProducao() {
                   onChange={handleChange}
                   required
                 />
-              </div>
-
-              <div className="form-group">
-                <label>Status</label>
-                <select
-                  name="status"
-                  value={dadosFormulario.status}
-                  onChange={handleChange}
-                >
-                  <option value="pendente">Pendente</option>
-                  <option value="em-andamento">Em andamento</option>
-                  <option value="finalizada">Finalizada</option>
-                </select>
               </div>
 
               <div className="form-group">
@@ -296,7 +302,7 @@ function EtapasProducao() {
                       funcionarios: [...new Set(selecionados)],
                     });
                   }}
-                  style={{ height: '120px' }}
+                  style={{ height: "120px" }}
                 >
                   {funcionariosDisponiveis.map((funcionario) => (
                     <option key={funcionario} value={funcionario}>
