@@ -21,7 +21,7 @@ function Login() {
 
     if (usuario) {
       localStorage.setItem("cargo", usuario.cargo);
-      navigate("/gerenciarAeronaves"); // ou uma rota inicial comum
+      navigate("/gerenciarAeronaves");
     } else {
       alert("Email ou senha inválidos!");
     }

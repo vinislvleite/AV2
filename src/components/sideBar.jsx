@@ -8,23 +8,19 @@ function SideBar() {
   const navigate = useNavigate();
 
   const cargo = localStorage.getItem("cargo") || "Desconhecido";
-  const nome = "Vinícius Leite"; // futuramente pode vir do login
+  const nome = "Vinícius Leite";
 
-  // 🔹 Define os menus por cargo
   const menus = {
     Administrador: [
       { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
       { id: "funcionarios", nome: "Gerenciar Funcionários", path: "/gerenciarFuncionarios" },
       { id: "pecas", nome: "Gerenciar Peças", path: "/gerenciarPecas" },
-      { id: "etapas", nome: "Etapas de Produção", path: "/etapasProducao" },
     ],
     Engenheiro: [
       { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
-      { id: "etapas", nome: "Etapas de Produção", path: "/etapasProducao" },
     ],
     Operador: [
       { id: "pecas", nome: "Gerenciar Peças", path: "/gerenciarPecas" },
-      { id: "etapas", nome: "Etapas de Produção", path: "/etapasProducao" },
     ],
   };
 
@@ -35,7 +31,6 @@ function SideBar() {
     if (path.includes("gerenciarAeronaves")) setActive("aeronaves");
     else if (path.includes("gerenciarFuncionarios")) setActive("funcionarios");
     else if (path.includes("gerenciarPecas")) setActive("pecas");
-    else if (path.includes("etapasProducao")) setActive("etapas");
   }, [location]);
 
   const handleNavigation = (path, item) => {
