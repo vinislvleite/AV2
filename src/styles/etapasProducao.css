@@ -25,7 +25,6 @@
   gap: 15px;
 }
 
-/* Botões */
 .button,
 .button-nova,
 .button-cancelar,
@@ -48,7 +47,6 @@
   background: #2980b9;
 }
 
-/* Ações */
 .acoes-etapa {
   margin-top: 12px;
   display: flex;
@@ -71,7 +69,6 @@
   background-color: #2980b9;
 }
 
-/* Toast */
 .toast {
   position: fixed;
   top: 20px;
@@ -86,7 +83,6 @@
   animation: fadein 0.5s, fadeout 0.5s 2s;
 }
 
-/* Filtros */
 .filtros-container {
   background: white;
   padding: 20px;
@@ -109,7 +105,6 @@
   color: #031C30;
 }
 
-/* Lista */
 .lista-etapas {
   background: white;
   border-radius: 8px;
@@ -188,7 +183,6 @@
   border: 1px solid #dee2e6;
 }
 
-/* Modal */
 .modal-overlay {
   position: fixed;
   inset: 0;
