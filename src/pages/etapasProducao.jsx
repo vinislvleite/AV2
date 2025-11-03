@@ -7,15 +7,14 @@ function EtapasProducao() {
   const [filtroStatus, setFiltroStatus] = useState("todas");
 
   const [etapas, setEtapas] = useState(() => {
-    const salvas = localStorage.getItem("etapas");
+    const salvas = localStorage.getItem("etapas_global");
     return salvas ? JSON.parse(salvas) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem("etapas", JSON.stringify(etapas));
+    localStorage.setItem("etapas_global", JSON.stringify(etapas));
   }, [etapas]);
 
-  // tipoUsuario = Administrador | Engenheiro | Operador
   const tipoUsuario = localStorage.getItem("cargo") || "Operador";
 
   const [dadosFormulario, setDadosFormulario] = useState({
@@ -31,8 +30,8 @@ function EtapasProducao() {
 
   useEffect(() => {
     const atualizarListas = () => {
-      const salvosFunc = localStorage.getItem("funcionarios");
-      const salvosAero = localStorage.getItem("aeronaves");
+      const salvosFunc = localStorage.getItem("funcionarios_global");
+      const salvosAero = localStorage.getItem("aeronaves_global");
       setFuncionariosDisponiveis(
         salvosFunc ? JSON.parse(salvosFunc).map((f) => f.nome) : []
       );

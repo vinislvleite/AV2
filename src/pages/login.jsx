@@ -15,7 +15,8 @@ function Login() {
       { usuario: "operador", senha: "123", cargo: "Operador" },
     ];
 
-    const cadastrados = JSON.parse(localStorage.getItem("usuariosExtra")) || [];
+    const cadastrados =
+      JSON.parse(localStorage.getItem("usuariosExtra_global")) || [];
 
     setUsuarios([...padroes, ...cadastrados]);
   }, []);
@@ -29,7 +30,9 @@ function Login() {
     }
 
     const user = usuarios.find(
-      (u) => u.usuario === usuario.trim() && u.senha === senha.trim()
+      (u) =>
+        u.usuario.trim().toLowerCase() === usuario.trim().toLowerCase() &&
+        u.senha.trim() === senha.trim()
     );
 
     if (user) {

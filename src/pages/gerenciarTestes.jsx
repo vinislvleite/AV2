@@ -4,7 +4,7 @@ import "../styles/gerenciarTestes.css";
 function GerenciarTestes() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [testes, setTestes] = useState(() => {
-    const salvos = localStorage.getItem("testes");
+    const salvos = localStorage.getItem("testes_global");
     return salvos ? JSON.parse(salvos) : [];
   });
 
@@ -18,7 +18,7 @@ function GerenciarTestes() {
   });
 
   useEffect(() => {
-    localStorage.setItem("testes", JSON.stringify(testes));
+    localStorage.setItem("testes_global", JSON.stringify(testes));
   }, [testes]);
 
   const handleChange = (e) => {

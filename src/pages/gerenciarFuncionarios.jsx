@@ -5,7 +5,7 @@ function GerenciarFuncionarios() {
   const [mostrarModal, setMostrarModal] = useState(false);
 
   const [funcionarios, setFuncionarios] = useState(() => {
-    const salvos = localStorage.getItem("funcionarios");
+    const salvos = localStorage.getItem("funcionarios_global");
     return salvos ? JSON.parse(salvos) : [];
   });
 
@@ -19,7 +19,7 @@ function GerenciarFuncionarios() {
   });
 
   useEffect(() => {
-    localStorage.setItem("funcionarios", JSON.stringify(funcionarios));
+    localStorage.setItem("funcionarios_global", JSON.stringify(funcionarios));
   }, [funcionarios]);
 
   const handleChange = (e) => {
@@ -36,7 +36,7 @@ function GerenciarFuncionarios() {
 
     const novaLista = [...funcionarios, novo];
     setFuncionarios(novaLista);
-    localStorage.setItem("funcionarios", JSON.stringify(novaLista));
+    localStorage.setItem("funcionarios_global", JSON.stringify(novaLista));
 
     const novoLogin = {
       usuario: novoFuncionario.usuario.trim().toLowerCase(),
@@ -44,9 +44,10 @@ function GerenciarFuncionarios() {
       cargo: novoFuncionario.nivel,
     };
 
-    const usuariosExtra = JSON.parse(localStorage.getItem("usuariosExtra")) || [];
+    const usuariosExtra =
+      JSON.parse(localStorage.getItem("usuariosExtra_global")) || [];
     usuariosExtra.push(novoLogin);
-    localStorage.setItem("usuariosExtra", JSON.stringify(usuariosExtra));
+    localStorage.setItem("usuariosExtra_global", JSON.stringify(usuariosExtra));
 
     setNovoFuncionario({
       nome: "",
@@ -82,13 +83,24 @@ function GerenciarFuncionarios() {
             <div key={f.id} className="cartao-funcionario">
               <div className="info-funcionario">
                 <h3>{f.nome}</h3>
-                <p><strong>Usuário:</strong> {f.usuario || "(não definido)"}</p>
-                <p><strong>Telefone:</strong> {f.telefone}</p>
-                <p><strong>Endereço:</strong> {f.endereco}</p>
-                <p><strong>Nível:</strong> {f.nivel}</p>
+                <p>
+                  <strong>Usuário:</strong> {f.usuario || "(não definido)"}
+                </p>
+                <p>
+                  <strong>Telefone:</strong> {f.telefone}
+                </p>
+                <p>
+                  <strong>Endereço:</strong> {f.endereco}
+                </p>
+                <p>
+                  <strong>Nível:</strong> {f.nivel}
+                </p>
               </div>
               <div className="acoes-funcionario">
-                <button className="button-excluir" onClick={() => excluirFuncionario(f.id)}>
+                <button
+                  className="button-excluir"
+                  onClick={() => excluirFuncionario(f.id)}
+                >
                   Excluir
                 </button>
               </div>
@@ -102,7 +114,12 @@ function GerenciarFuncionarios() {
           <div className="modal-content">
             <div className="modal-header">
               <h2 className="modal-title">Cadastrar Funcionário</h2>
-              <button className="fechar-button" onClick={() => setMostrarModal(false)}>×</button>
+              <button
+                className="fechar-button"
+                onClick={() => setMostrarModal(false)}
+              >
+                ×
+              </button>
             </div>
 
             <form onSubmit={handleSubmit}>

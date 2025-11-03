@@ -17,7 +17,6 @@ function SideBar() {
     if (cargoSalvo) setCargo(cargoSalvo);
   }, []);
 
-  // Menus conforme o nível de permissão (baseado no AV1)
   const menus = {
     Administrador: [
       { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
@@ -39,7 +38,6 @@ function SideBar() {
 
   const botoes = menus[cargo] || [];
 
-  // Define qual botão está ativo conforme a rota atual
   useEffect(() => {
     const path = location.pathname;
     if (path.includes("gerenciarAeronaves")) setActive("aeronaves");
@@ -54,7 +52,30 @@ function SideBar() {
   };
 
   const handleLogout = () => {
+    const dadosGlobais = {
+      aeronaves: localStorage.getItem("aeronaves_global"),
+      pecas: localStorage.getItem("pecas_global"),
+      etapas: localStorage.getItem("etapas_global"),
+      funcionarios: localStorage.getItem("funcionarios_global"),
+      testes: localStorage.getItem("testes_global"),
+      usuariosExtra: localStorage.getItem("usuariosExtra_global"),
+    };
+
     localStorage.clear();
+
+    if (dadosGlobais.aeronaves)
+      localStorage.setItem("aeronaves_global", dadosGlobais.aeronaves);
+    if (dadosGlobais.pecas)
+      localStorage.setItem("pecas_global", dadosGlobais.pecas);
+    if (dadosGlobais.etapas)
+      localStorage.setItem("etapas_global", dadosGlobais.etapas);
+    if (dadosGlobais.funcionarios)
+      localStorage.setItem("funcionarios_global", dadosGlobais.funcionarios);
+    if (dadosGlobais.testes)
+      localStorage.setItem("testes_global", dadosGlobais.testes);
+    if (dadosGlobais.usuariosExtra)
+      localStorage.setItem("usuariosExtra_global", dadosGlobais.usuariosExtra);
+
     navigate("/");
   };
 

@@ -6,7 +6,7 @@ function GerenciarPecas() {
   const [mostrarModalStatus, setMostrarModalStatus] = useState(false);
 
   const [pecas, setPecas] = useState(() => {
-    const salvas = localStorage.getItem("pecas");
+    const salvas = localStorage.getItem("pecas_global");
     return salvas ? JSON.parse(salvas) : [];
   });
 
@@ -22,7 +22,7 @@ function GerenciarPecas() {
   const [novoStatus, setNovoStatus] = useState("em producao");
 
   useEffect(() => {
-    localStorage.setItem("pecas", JSON.stringify(pecas));
+    localStorage.setItem("pecas_global", JSON.stringify(pecas));
   }, [pecas]);
 
   const handleChange = (e) => {

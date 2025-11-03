@@ -7,15 +7,14 @@ function GerenciarAeronaves() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [aeronaves, setAeronaves] = useState(() => {
-    const salvas = localStorage.getItem("aeronaves");
+    const salvas = localStorage.getItem("aeronaves_global");
     return salvas ? JSON.parse(salvas) : [];
   });
 
   useEffect(() => {
-    localStorage.setItem("aeronaves", JSON.stringify(aeronaves));
+    localStorage.setItem("aeronaves_global", JSON.stringify(aeronaves));
   }, [aeronaves]);
 
-  // usa o mesmo campo salvo no login
   const normalizar = (texto) =>
     texto
       ? texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim()
