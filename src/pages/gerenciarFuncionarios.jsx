@@ -6,12 +6,7 @@ function GerenciarFuncionarios() {
 
   const [funcionarios, setFuncionarios] = useState(() => {
     const salvos = localStorage.getItem("funcionarios");
-    return salvos
-      ? JSON.parse(salvos)
-      : [
-          { id: 1, nome: "João Silva", telefone: "(11) 99999-0000", endereco: "Rua Alfa, 123", nivel: "Operador" },
-          { id: 2, nome: "Maria Santos", telefone: "(12) 98888-2222", endereco: "Rua Beta, 456", nivel: "Engenheira" },
-        ];
+    return salvos ? JSON.parse(salvos) : [];
   });
 
   const [novoFuncionario, setNovoFuncionario] = useState({
@@ -82,28 +77,24 @@ function GerenciarFuncionarios() {
       <div className="funcionarios-lista">
         <h2 className="titulo-secao">Lista de Funcionários Cadastrados</h2>
 
-        {funcionarios.length === 0 ? (
-          <p className="mensagem-vazia">Nenhum funcionário cadastrado.</p>
-        ) : (
-          <div className="grade-funcionarios">
-            {funcionarios.map((f) => (
-              <div key={f.id} className="cartao-funcionario">
-                <div className="info-funcionario">
-                  <h3>{f.nome}</h3>
-                  <p><strong>Usuário:</strong> {f.usuario || "(não definido)"}</p>
-                  <p><strong>Telefone:</strong> {f.telefone}</p>
-                  <p><strong>Endereço:</strong> {f.endereco}</p>
-                  <p><strong>Nível:</strong> {f.nivel}</p>
-                </div>
-                <div className="acoes-funcionario">
-                  <button className="button-excluir" onClick={() => excluirFuncionario(f.id)}>
-                    Excluir
-                  </button>
-                </div>
+        <div className="grade-funcionarios">
+          {funcionarios.map((f) => (
+            <div key={f.id} className="cartao-funcionario">
+              <div className="info-funcionario">
+                <h3>{f.nome}</h3>
+                <p><strong>Usuário:</strong> {f.usuario || "(não definido)"}</p>
+                <p><strong>Telefone:</strong> {f.telefone}</p>
+                <p><strong>Endereço:</strong> {f.endereco}</p>
+                <p><strong>Nível:</strong> {f.nivel}</p>
               </div>
-            ))}
-          </div>
-        )}
+              <div className="acoes-funcionario">
+                <button className="button-excluir" onClick={() => excluirFuncionario(f.id)}>
+                  Excluir
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {mostrarModal && (

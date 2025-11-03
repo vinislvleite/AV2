@@ -17,6 +17,7 @@ function SideBar() {
     if (cargoSalvo) setCargo(cargoSalvo);
   }, []);
 
+  // Menus conforme o nível de permissão (baseado no AV1)
   const menus = {
     Administrador: [
       { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
@@ -26,16 +27,19 @@ function SideBar() {
     ],
     Engenheiro: [
       { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
+      { id: "pecas", nome: "Gerenciar Peças", path: "/gerenciarPecas" },
       { id: "testes", nome: "Gerenciar Testes", path: "/gerenciarTestes" },
     ],
     Operador: [
-      { id: "pecas", nome: "Gerenciar Peças", path: "/gerenciarPecas" },
+      { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
+      { id: "pecas", nome: "Visualizar Peças", path: "/gerenciarPecas" },
       { id: "testes", nome: "Visualizar Testes", path: "/gerenciarTestes" },
     ],
   };
 
   const botoes = menus[cargo] || [];
 
+  // Define qual botão está ativo conforme a rota atual
   useEffect(() => {
     const path = location.pathname;
     if (path.includes("gerenciarAeronaves")) setActive("aeronaves");

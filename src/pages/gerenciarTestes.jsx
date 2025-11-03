@@ -3,11 +3,12 @@ import "../styles/gerenciarTestes.css";
 
 function GerenciarTestes() {
   const [mostrarModal, setMostrarModal] = useState(false);
-
   const [testes, setTestes] = useState(() => {
     const salvos = localStorage.getItem("testes");
     return salvos ? JSON.parse(salvos) : [];
   });
+
+  const cargo = localStorage.getItem("cargo");
 
   const [novoTeste, setNovoTeste] = useState({
     id: "",
@@ -27,6 +28,12 @@ function GerenciarTestes() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    if (cargo === "Operador") {
+      alert("Acesso negado: operadores não podem criar testes.");
+      setMostrarModal(false);
+      return;
+    }
+
     const idNumber = parseInt(novoTeste.id, 10);
     if (isNaN(idNumber) || idNumber <= 0) {
       alert("O ID deve ser um número positivo!");
@@ -45,6 +52,11 @@ function GerenciarTestes() {
   };
 
   const excluirTeste = (id) => {
+    if (cargo === "Operador") {
+      alert("Acesso negado: operadores não podem excluir testes.");
+      return;
+    }
+
     if (window.confirm("Tem certeza que deseja excluir este teste?")) {
       setTestes(testes.filter((t) => t.id !== id));
     }
@@ -55,48 +67,49 @@ function GerenciarTestes() {
       <div className="testes-header">
         <h1 className="testes-titulo">Gerenciar Testes</h1>
         <div className="testes-acoes">
-          <button className="button-nova" onClick={() => setMostrarModal(true)}>
-            Novo Teste
-          </button>
+          {cargo !== "Operador" && (
+            <button className="button-nova" onClick={() => setMostrarModal(true)}>
+              Novo Teste
+            </button>
+          )}
         </div>
       </div>
 
       <div className="lista-testes">
         <h2 className="titulo-secao">Lista de Testes</h2>
 
-        {/* Só renderiza o grid se houver itens */}
-        {testes.length > 0 && (
-          <div className="grade-testes">
-            {testes.map((t) => (
-              <div key={t.id} className="cartao-teste">
-                <div className="cabecalho-teste">
-                  <h3 className="nome-teste">{t.nome}</h3>
-                  <span
-                    className={`resultado-badge ${
-                      t.resultado === "aprovado"
-                        ? "resultado-aprovado"
-                        : "resultado-reprovado"
-                    }`}
-                  >
-                    {t.resultado.toUpperCase()}
-                  </span>
-                </div>
+        <div className="grade-testes">
+          {testes.map((t) => (
+            <div key={t.id} className="cartao-teste">
+              <div className="cabecalho-teste">
+                <h3 className="nome-teste">{t.nome}</h3>
+                <span
+                  className={`resultado-badge ${
+                    t.resultado === "aprovado"
+                      ? "resultado-aprovado"
+                      : "resultado-reprovado"
+                  }`}
+                >
+                  {t.resultado.toUpperCase()}
+                </span>
+              </div>
 
-                <p><strong>ID:</strong> {t.id}</p>
-                <p><strong>Tipo de Teste:</strong> {t.tipo}</p>
+              <p><strong>ID:</strong> {t.id}</p>
+              <p><strong>Tipo de Teste:</strong> {t.tipo}</p>
 
-                <div className="acoes-teste">
+              <div className="acoes-teste">
+                {cargo !== "Operador" && (
                   <button
                     className="button-excluir"
                     onClick={() => excluirTeste(t.id)}
                   >
                     Excluir
                   </button>
-                </div>
+                )}
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {mostrarModal && (

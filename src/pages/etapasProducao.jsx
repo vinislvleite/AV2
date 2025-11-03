@@ -8,39 +8,15 @@ function EtapasProducao() {
 
   const [etapas, setEtapas] = useState(() => {
     const salvas = localStorage.getItem("etapas");
-    return salvas
-      ? JSON.parse(salvas)
-      : [
-          {
-            id: 1,
-            nome: "Montagem da Fuselagem",
-            status: "em-andamento",
-            prazo: "2024-12-05",
-            aeronave: "1",
-            funcionarios: ["João Silva", "Maria Santos"],
-          },
-          {
-            id: 2,
-            nome: "Instalação de Sistemas",
-            status: "pendente",
-            prazo: "2024-12-10",
-            aeronave: "1",
-            funcionarios: ["João Silva"],
-          },
-          {
-            id: 3,
-            nome: "Testes de Qualidade",
-            status: "finalizada",
-            prazo: "2024-11-30",
-            aeronave: "2",
-            funcionarios: ["Maria Santos"],
-          },
-        ];
+    return salvas ? JSON.parse(salvas) : [];
   });
 
   useEffect(() => {
     localStorage.setItem("etapas", JSON.stringify(etapas));
   }, [etapas]);
+
+  // tipoUsuario = Administrador | Engenheiro | Operador
+  const tipoUsuario = localStorage.getItem("cargo") || "Operador";
 
   const [dadosFormulario, setDadosFormulario] = useState({
     nome: "",
@@ -57,16 +33,11 @@ function EtapasProducao() {
     const atualizarListas = () => {
       const salvosFunc = localStorage.getItem("funcionarios");
       const salvosAero = localStorage.getItem("aeronaves");
-
       setFuncionariosDisponiveis(
         salvosFunc ? JSON.parse(salvosFunc).map((f) => f.nome) : []
       );
-
-      setAeronavesDisponiveis(
-        salvosAero ? JSON.parse(salvosAero) : []
-      );
+      setAeronavesDisponiveis(salvosAero ? JSON.parse(salvosAero) : []);
     };
-
     window.addEventListener("storage", atualizarListas);
     atualizarListas();
     return () => window.removeEventListener("storage", atualizarListas);
@@ -98,20 +69,17 @@ function EtapasProducao() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const etapaEmAndamento = etapas.find(
       (etapa) =>
         etapa.aeronave === dadosFormulario.aeronave &&
         etapa.status !== "finalizada"
     );
-
     if (etapaEmAndamento) {
       alert(
         `Não é possível iniciar uma nova etapa antes de finalizar "${etapaEmAndamento.nome}" da mesma aeronave.`
       );
       return;
     }
-
     adicionarEtapa(dadosFormulario);
   };
 
@@ -122,6 +90,10 @@ function EtapasProducao() {
   };
 
   const excluirEtapa = (id) => {
+    if (tipoUsuario === "Operador") {
+      alert("Apenas administradores e engenheiros podem excluir etapas.");
+      return;
+    }
     if (window.confirm("Tem certeza que deseja excluir esta etapa?")) {
       setEtapas(etapas.filter((etapa) => etapa.id !== id));
     }
@@ -140,6 +112,10 @@ function EtapasProducao() {
   const [funcionariosSelecionados, setFuncionariosSelecionados] = useState([]);
 
   const handleAssociarFuncionario = () => {
+    if (tipoUsuario === "Operador") {
+      alert("Apenas administradores e engenheiros podem associar funcionários.");
+      return;
+    }
     if (!etapaSelecionada) {
       alert("Selecione uma etapa!");
       return;
@@ -148,7 +124,6 @@ function EtapasProducao() {
       alert("Selecione pelo menos um funcionário!");
       return;
     }
-
     setEtapas((prev) =>
       prev.map((e) =>
         e.id === parseInt(etapaSelecionada)
@@ -159,7 +134,6 @@ function EtapasProducao() {
           : e
       )
     );
-
     setMostrarAssociarModal(false);
     setEtapaSelecionada("");
     setFuncionariosSelecionados([]);
@@ -175,15 +149,19 @@ function EtapasProducao() {
       <div className="etapas-header">
         <h1 className="etapas-titulo">Etapas de Produção</h1>
         <div className="etapas-acoes">
-          <button className="button-nova" onClick={() => setMostrarModal(true)}>
-            Nova Etapa
-          </button>
-          <button
-            className="button-status"
-            onClick={() => setMostrarAssociarModal(true)}
-          >
-            Associar Funcionário
-          </button>
+          {(tipoUsuario === "Administrador" || tipoUsuario === "Engenheiro") && (
+            <button className="button-nova" onClick={() => setMostrarModal(true)}>
+              Nova Etapa
+            </button>
+          )}
+          {(tipoUsuario === "Administrador" || tipoUsuario === "Engenheiro") && (
+            <button
+              className="button-status"
+              onClick={() => setMostrarAssociarModal(true)}
+            >
+              Associar Funcionário
+            </button>
+          )}
         </div>
       </div>
 
@@ -205,7 +183,6 @@ function EtapasProducao() {
 
       <div className="lista-etapas">
         <h2 className="titulo-secao">Lista de Etapas de Produção</h2>
-
         <div className="grade-etapas">
           {etapasFiltradas.map((etapa) => (
             <div key={etapa.id} className="cartao-etapa">
@@ -215,7 +192,6 @@ function EtapasProducao() {
                   {getStatusTexto(etapa.status)}
                 </span>
               </div>
-
               <p>
                 <strong>Prazo:</strong> {etapa.prazo}
               </p>
@@ -225,11 +201,8 @@ function EtapasProducao() {
                   (a) => String(a.id) === String(etapa.aeronave)
                 )?.modelo || "—"}
               </p>
-
               <div className="funcionarios-etapa">
-                <div className="titulo-funcionarios">
-                  Funcionários alocados:
-                </div>
+                <div className="titulo-funcionarios">Funcionários alocados:</div>
                 <div className="lista-funcionarios">
                   {etapa.funcionarios.map((funcionario, index) => (
                     <span key={index} className="badge-funcionario">
@@ -256,19 +229,21 @@ function EtapasProducao() {
                     Finalizar
                   </button>
                 )}
-                <button
-                  className="button-acao excluir"
-                  onClick={() => excluirEtapa(etapa.id)}
-                >
-                  Excluir
-                </button>
+                {(tipoUsuario === "Administrador" || tipoUsuario === "Engenheiro") && (
+                  <button
+                    className="button-acao excluir"
+                    onClick={() => excluirEtapa(etapa.id)}
+                  >
+                    Excluir
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {mostrarModal && (
+      {mostrarModal && (tipoUsuario === "Administrador" || tipoUsuario === "Engenheiro") && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
@@ -280,7 +255,6 @@ function EtapasProducao() {
                 ×
               </button>
             </div>
-
             <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label>Nome da Etapa</label>
@@ -292,7 +266,6 @@ function EtapasProducao() {
                   required
                 />
               </div>
-
               <div className="form-group">
                 <label>Prazo de Conclusão</label>
                 <input
@@ -303,7 +276,6 @@ function EtapasProducao() {
                   required
                 />
               </div>
-
               <div className="form-group">
                 <label>Aeronave</label>
                 <select
@@ -320,7 +292,6 @@ function EtapasProducao() {
                   ))}
                 </select>
               </div>
-
               <div className="form-group">
                 <label>Funcionários</label>
                 <select
@@ -347,7 +318,6 @@ function EtapasProducao() {
                 </select>
                 <small>Segure Ctrl para selecionar múltiplos funcionários</small>
               </div>
-
               <div className="form-actions">
                 <button
                   type="button"
@@ -365,76 +335,74 @@ function EtapasProducao() {
         </div>
       )}
 
-      {mostrarAssociarModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h2 className="modal-title">Associar Funcionário a Etapa</h2>
-              <button
-                className="fechar-button"
-                onClick={() => setMostrarAssociarModal(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="form-group">
-              <label>Selecione a Etapa</label>
-              <select
-                value={etapaSelecionada}
-                onChange={(e) => setEtapaSelecionada(e.target.value)}
-              >
-                <option value="">Selecione</option>
-                {etapas.map((etapa) => (
-                  <option key={etapa.id} value={etapa.id}>
-                    {etapa.nome}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label>Funcionários</label>
-              <select
-                multiple
-                value={funcionariosSelecionados}
-                onChange={(e) => {
-                  const selecionados = Array.from(
-                    e.target.selectedOptions,
-                    (opt) => opt.value
-                  );
-                  setFuncionariosSelecionados([...new Set(selecionados)]);
-                }}
-                style={{ height: "120px" }}
-              >
-                {funcionariosDisponiveis.map((f) => (
-                  <option key={f} value={f}>
-                    {f}
-                  </option>
-                ))}
-              </select>
-              <small>Segure Ctrl para selecionar vários</small>
-            </div>
-
-            <div className="form-actions">
-              <button
-                type="button"
-                className="button-cancelar"
-                onClick={() => setMostrarAssociarModal(false)}
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                className="button-salvar"
-                onClick={handleAssociarFuncionario}
-              >
-                Salvar
-              </button>
+      {mostrarAssociarModal &&
+        (tipoUsuario === "Administrador" || tipoUsuario === "Engenheiro") && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h2 className="modal-title">Associar Funcionário a Etapa</h2>
+                <button
+                  className="fechar-button"
+                  onClick={() => setMostrarAssociarModal(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="form-group">
+                <label>Selecione a Etapa</label>
+                <select
+                  value={etapaSelecionada}
+                  onChange={(e) => setEtapaSelecionada(e.target.value)}
+                >
+                  <option value="">Selecione</option>
+                  {etapas.map((etapa) => (
+                    <option key={etapa.id} value={etapa.id}>
+                      {etapa.nome}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label>Funcionários</label>
+                <select
+                  multiple
+                  value={funcionariosSelecionados}
+                  onChange={(e) => {
+                    const selecionados = Array.from(
+                      e.target.selectedOptions,
+                      (opt) => opt.value
+                    );
+                    setFuncionariosSelecionados([...new Set(selecionados)]);
+                  }}
+                  style={{ height: "120px" }}
+                >
+                  {funcionariosDisponiveis.map((f) => (
+                    <option key={f} value={f}>
+                      {f}
+                    </option>
+                  ))}
+                </select>
+                <small>Segure Ctrl para selecionar vários</small>
+              </div>
+              <div className="form-actions">
+                <button
+                  type="button"
+                  className="button-cancelar"
+                  onClick={() => setMostrarAssociarModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className="button-salvar"
+                  onClick={handleAssociarFuncionario}
+                >
+                  Salvar
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
     </div>
   );
 }
