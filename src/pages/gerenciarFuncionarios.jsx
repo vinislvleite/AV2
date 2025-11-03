@@ -3,6 +3,7 @@ import "../styles/gerenciarFuncionarios.css";
 
 function GerenciarFuncionarios() {
   const [mostrarModal, setMostrarModal] = useState(false);
+
   const [funcionarios, setFuncionarios] = useState(() => {
     const salvos = localStorage.getItem("funcionarios");
     return salvos
@@ -15,9 +16,11 @@ function GerenciarFuncionarios() {
 
   const [novoFuncionario, setNovoFuncionario] = useState({
     nome: "",
+    usuario: "",
     telefone: "",
     endereco: "",
     nivel: "Operador",
+    senha: "",
   });
 
   useEffect(() => {
@@ -30,13 +33,37 @@ function GerenciarFuncionarios() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const novo = {
       id: funcionarios.length + 1,
       ...novoFuncionario,
     };
-    setFuncionarios([...funcionarios, novo]);
-    setNovoFuncionario({ nome: "", telefone: "", endereco: "", nivel: "Operador" });
+
+    const novaLista = [...funcionarios, novo];
+    setFuncionarios(novaLista);
+    localStorage.setItem("funcionarios", JSON.stringify(novaLista));
+
+    const novoLogin = {
+      usuario: novoFuncionario.usuario.trim().toLowerCase(),
+      senha: novoFuncionario.senha.trim(),
+      cargo: novoFuncionario.nivel,
+    };
+
+    const usuariosExtra = JSON.parse(localStorage.getItem("usuariosExtra")) || [];
+    usuariosExtra.push(novoLogin);
+    localStorage.setItem("usuariosExtra", JSON.stringify(usuariosExtra));
+
+    setNovoFuncionario({
+      nome: "",
+      usuario: "",
+      telefone: "",
+      endereco: "",
+      nivel: "Operador",
+      senha: "",
+    });
     setMostrarModal(false);
+
+    alert(`Funcionário criado!\nUsuário: ${novoLogin.usuario}`);
   };
 
   const excluirFuncionario = (id) => {
@@ -45,7 +72,6 @@ function GerenciarFuncionarios() {
 
   return (
     <div className="funcionarios-container">
-      {/* Cabeçalho */}
       <div className="funcionarios-header">
         <h1 className="funcionarios-titulo">Gerenciar Funcionários</h1>
         <button className="button-nova" onClick={() => setMostrarModal(true)}>
@@ -53,9 +79,8 @@ function GerenciarFuncionarios() {
         </button>
       </div>
 
-      {/* Lista de Funcionários */}
       <div className="funcionarios-lista">
-        <h2 className="titulo-secao">Lista de funcionários Cadastrados</h2>
+        <h2 className="titulo-secao">Lista de Funcionários Cadastrados</h2>
 
         {funcionarios.length === 0 ? (
           <p className="mensagem-vazia">Nenhum funcionário cadastrado.</p>
@@ -65,6 +90,7 @@ function GerenciarFuncionarios() {
               <div key={f.id} className="cartao-funcionario">
                 <div className="info-funcionario">
                   <h3>{f.nome}</h3>
+                  <p><strong>Usuário:</strong> {f.usuario || "(não definido)"}</p>
                   <p><strong>Telefone:</strong> {f.telefone}</p>
                   <p><strong>Endereço:</strong> {f.endereco}</p>
                   <p><strong>Nível:</strong> {f.nivel}</p>
@@ -80,7 +106,6 @@ function GerenciarFuncionarios() {
         )}
       </div>
 
-      {/* Modal de Cadastro */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -91,23 +116,69 @@ function GerenciarFuncionarios() {
 
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Nome</label>
-                <input type="text" name="nome" value={novoFuncionario.nome} onChange={handleChange} required />
+                <label>Nome Completo</label>
+                <input
+                  type="text"
+                  name="nome"
+                  value={novoFuncionario.nome}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Usuário de Login</label>
+                <input
+                  type="text"
+                  name="usuario"
+                  placeholder="Escolha um nome de usuário"
+                  value={novoFuncionario.usuario}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Senha de Acesso</label>
+                <input
+                  type="password"
+                  name="senha"
+                  placeholder="Crie uma senha"
+                  value={novoFuncionario.senha}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               <div className="form-group">
                 <label>Telefone</label>
-                <input type="text" name="telefone" value={novoFuncionario.telefone} onChange={handleChange} required />
+                <input
+                  type="text"
+                  name="telefone"
+                  value={novoFuncionario.telefone}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               <div className="form-group">
                 <label>Endereço</label>
-                <input type="text" name="endereco" value={novoFuncionario.endereco} onChange={handleChange} required />
+                <input
+                  type="text"
+                  name="endereco"
+                  value={novoFuncionario.endereco}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               <div className="form-group">
                 <label>Nível de Acesso</label>
-                <select name="nivel" value={novoFuncionario.nivel} onChange={handleChange}>
+                <select
+                  name="nivel"
+                  value={novoFuncionario.nivel}
+                  onChange={handleChange}
+                >
                   <option value="Administrador">Administrador</option>
                   <option value="Engenheiro">Engenheiro</option>
                   <option value="Operador">Operador</option>
@@ -115,8 +186,16 @@ function GerenciarFuncionarios() {
               </div>
 
               <div className="form-actions">
-                <button type="button" className="button-cancelar" onClick={() => setMostrarModal(false)}>Cancelar</button>
-                <button type="submit" className="button-salvar">Salvar</button>
+                <button
+                  type="button"
+                  className="button-cancelar"
+                  onClick={() => setMostrarModal(false)}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className="button-salvar">
+                  Salvar
+                </button>
               </div>
             </form>
           </div>

@@ -4,11 +4,18 @@ import "../styles/sidebar.css";
 
 function SideBar() {
   const [active, setActive] = useState("aeronaves");
+  const [nome, setNome] = useState("Usuário");
+  const [cargo, setCargo] = useState("Desconhecido");
+
   const location = useLocation();
   const navigate = useNavigate();
-
-  const cargo = localStorage.getItem("cargo") || "Desconhecido";
-  const nome = "Vinícius Leite";
+  
+  useEffect(() => {
+    const usuarioSalvo = localStorage.getItem("usuario");
+    const cargoSalvo = localStorage.getItem("cargo");
+    if (usuarioSalvo) setNome(usuarioSalvo);
+    if (cargoSalvo) setCargo(cargoSalvo);
+  }, []);
 
   const menus = {
     Administrador: [
@@ -39,7 +46,7 @@ function SideBar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("cargo");
+    localStorage.clear();
     navigate("/");
   };
 
