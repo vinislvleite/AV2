@@ -15,8 +15,13 @@ function GerenciarAeronaves() {
     localStorage.setItem("aeronaves", JSON.stringify(aeronaves));
   }, [aeronaves]);
 
-  // Tipo de usuário (adm, engenheiro ou operador)
-  const tipoUsuario = localStorage.getItem("tipoUsuario") || "operador";
+  // usa o mesmo campo salvo no login
+  const normalizar = (texto) =>
+    texto
+      ? texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim()
+      : "operador";
+
+  const cargo = normalizar(localStorage.getItem("cargo") || "operador");
 
   const [formData, setFormData] = useState({
     id: "",
@@ -56,7 +61,7 @@ function GerenciarAeronaves() {
   };
 
   const handleDeleteAircraft = (id) => {
-    if (tipoUsuario === "operador") {
+    if (cargo === "operador") {
       alert("Apenas administradores e engenheiros podem excluir aeronaves!");
       return;
     }
@@ -121,24 +126,20 @@ function GerenciarAeronaves() {
     texto += `\nData de emissão: ${dataAtual}`;
 
     const doc = new jsPDF();
-
     let posicaoTexto = 55;
 
     try {
       const img = new Image();
       img.src = "/AerocodePreto.png";
-
       await new Promise((resolve, reject) => {
         img.onload = resolve;
         img.onerror = reject;
       });
-
       const pageWidth = doc.internal.pageSize.getWidth();
       const proporcao = img.height / img.width;
       const imgWidth = 50;
       const imgHeight = imgWidth * proporcao;
       const x = (pageWidth - imgWidth) / 2;
-
       doc.addImage(img, "PNG", x, 10, imgWidth, imgHeight);
       posicaoTexto = 10 + imgHeight + 15;
     } catch {
@@ -153,12 +154,17 @@ function GerenciarAeronaves() {
     doc.save(`Relatorio_Aeronave_${aeronave.id || "N/A"}.pdf`);
   };
 
+  const podeEditar =
+    cargo === "administrador" ||
+    cargo === "adm" ||
+    cargo === "engenheiro";
+
   return (
     <div className="aeronaves-container">
       <div className="aeronaves-header">
         <h1 className="aeronaves-titulo">Gerenciar Aeronaves</h1>
         <div className="aeronaves-acoes">
-          {(tipoUsuario === "adm" || tipoUsuario === "engenheiro") && (
+          {podeEditar && (
             <button className="button-nova" onClick={() => setShowModal(true)}>
               Nova Aeronave
             </button>
@@ -189,7 +195,7 @@ function GerenciarAeronaves() {
               <p><strong>Alcance:</strong> {a.alcance} km</p>
 
               <div className="acoes-aeronave">
-                {(tipoUsuario === "adm" || tipoUsuario === "engenheiro") && (
+                {podeEditar && (
                   <button className="button-excluir" onClick={() => handleDeleteAircraft(a.id)}>
                     Excluir
                   </button>
@@ -207,7 +213,7 @@ function GerenciarAeronaves() {
         </div>
       </div>
 
-      {showModal && (tipoUsuario === "adm" || tipoUsuario === "engenheiro") && (
+      {showModal && podeEditar && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
@@ -243,7 +249,11 @@ function GerenciarAeronaves() {
 
               <div className="form-group">
                 <label>Tipo</label>
-                <select name="tipo" value={formData.tipo} onChange={handleChange}>
+                <select
+                  name="tipo"
+                  value={formData.tipo}
+                  onChange={handleChange}
+                >
                   <option value="COMERCIAL">Comercial</option>
                   <option value="MILITAR">Militar</option>
                 </select>
@@ -274,14 +284,12 @@ function GerenciarAeronaves() {
               </div>
 
               <div className="form-actions">
-                <button
-                  type="button"
-                  className="button-cancelar"
-                  onClick={() => setShowModal(false)}
-                >
+                <button type="button" className="button-cancelar" onClick={() => setShowModal(false)}>
                   Cancelar
                 </button>
-                <button type="submit" className="button-salvar">Salvar</button>
+                <button type="submit" className="button-salvar">
+                  Salvar
+                </button>
               </div>
             </form>
           </div>
