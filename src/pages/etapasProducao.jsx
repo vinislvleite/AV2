@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "../styles/etapasProducao.css";
 
-
 function EtapasProducao() {
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [mostrarAssociarModal, setMostrarAssociarModal] = useState(false);
   const [filtroStatus, setFiltroStatus] = useState("todas");
 
   const [etapas, setEtapas] = useState(() => {
@@ -136,6 +136,35 @@ function EtapasProducao() {
     return mapaStatus[status] || status;
   };
 
+  const [etapaSelecionada, setEtapaSelecionada] = useState("");
+  const [funcionariosSelecionados, setFuncionariosSelecionados] = useState([]);
+
+  const handleAssociarFuncionario = () => {
+    if (!etapaSelecionada) {
+      alert("Selecione uma etapa!");
+      return;
+    }
+    if (funcionariosSelecionados.length === 0) {
+      alert("Selecione pelo menos um funcionário!");
+      return;
+    }
+
+    setEtapas((prev) =>
+      prev.map((e) =>
+        e.id === parseInt(etapaSelecionada)
+          ? {
+              ...e,
+              funcionarios: [...new Set([...e.funcionarios, ...funcionariosSelecionados])],
+            }
+          : e
+      )
+    );
+
+    setMostrarAssociarModal(false);
+    setEtapaSelecionada("");
+    setFuncionariosSelecionados([]);
+  };
+
   const etapasFiltradas =
     filtroStatus === "todas"
       ? etapas
@@ -148,6 +177,12 @@ function EtapasProducao() {
         <div className="etapas-acoes">
           <button className="button-nova" onClick={() => setMostrarModal(true)}>
             Nova Etapa
+          </button>
+          <button
+            className="button-status"
+            onClick={() => setMostrarAssociarModal(true)}
+          >
+            Associar Funcionário
           </button>
         </div>
       </div>
@@ -326,6 +361,77 @@ function EtapasProducao() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {mostrarAssociarModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2 className="modal-title">Associar Funcionário a Etapa</h2>
+              <button
+                className="fechar-button"
+                onClick={() => setMostrarAssociarModal(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="form-group">
+              <label>Selecione a Etapa</label>
+              <select
+                value={etapaSelecionada}
+                onChange={(e) => setEtapaSelecionada(e.target.value)}
+              >
+                <option value="">Selecione</option>
+                {etapas.map((etapa) => (
+                  <option key={etapa.id} value={etapa.id}>
+                    {etapa.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Funcionários</label>
+              <select
+                multiple
+                value={funcionariosSelecionados}
+                onChange={(e) => {
+                  const selecionados = Array.from(
+                    e.target.selectedOptions,
+                    (opt) => opt.value
+                  );
+                  setFuncionariosSelecionados([...new Set(selecionados)]);
+                }}
+                style={{ height: "120px" }}
+              >
+                {funcionariosDisponiveis.map((f) => (
+                  <option key={f} value={f}>
+                    {f}
+                  </option>
+                ))}
+              </select>
+              <small>Segure Ctrl para selecionar vários</small>
+            </div>
+
+            <div className="form-actions">
+              <button
+                type="button"
+                className="button-cancelar"
+                onClick={() => setMostrarAssociarModal(false)}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="button-salvar"
+                onClick={handleAssociarFuncionario}
+              >
+                Salvar
+              </button>
+            </div>
           </div>
         </div>
       )}
