@@ -9,7 +9,7 @@ function SideBar() {
 
   const location = useLocation();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const usuarioSalvo = localStorage.getItem("usuario");
     const cargoSalvo = localStorage.getItem("cargo");
@@ -22,12 +22,15 @@ function SideBar() {
       { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
       { id: "funcionarios", nome: "Gerenciar Funcionários", path: "/gerenciarFuncionarios" },
       { id: "pecas", nome: "Gerenciar Peças", path: "/gerenciarPecas" },
+      { id: "testes", nome: "Gerenciar Testes", path: "/gerenciarTestes" },
     ],
     Engenheiro: [
       { id: "aeronaves", nome: "Gerenciar Aeronaves", path: "/gerenciarAeronaves" },
+      { id: "testes", nome: "Gerenciar Testes", path: "/gerenciarTestes" },
     ],
     Operador: [
       { id: "pecas", nome: "Gerenciar Peças", path: "/gerenciarPecas" },
+      { id: "testes", nome: "Visualizar Testes", path: "/gerenciarTestes" },
     ],
   };
 
@@ -38,6 +41,7 @@ function SideBar() {
     if (path.includes("gerenciarAeronaves")) setActive("aeronaves");
     else if (path.includes("gerenciarFuncionarios")) setActive("funcionarios");
     else if (path.includes("gerenciarPecas")) setActive("pecas");
+    else if (path.includes("gerenciarTestes")) setActive("testes");
   }, [location]);
 
   const handleNavigation = (path, item) => {

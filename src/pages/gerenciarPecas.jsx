@@ -4,6 +4,7 @@ import "../styles/gerenciarPecas.css";
 function GerenciarPecas() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [mostrarModalStatus, setMostrarModalStatus] = useState(false);
+
   const [pecas, setPecas] = useState(() => {
     const salvas = localStorage.getItem("pecas");
     return salvas ? JSON.parse(salvas) : [];
@@ -13,6 +14,7 @@ function GerenciarPecas() {
     id: "",
     nome: "",
     tipo: "NACIONAL",
+    fornecedor: "",
     status: "em producao",
   });
 
@@ -47,7 +49,13 @@ function GerenciarPecas() {
     };
 
     setPecas([...pecas, nova]);
-    setNovaPeca({ id: "", nome: "", tipo: "NACIONAL", status: "em producao" });
+    setNovaPeca({
+      id: "",
+      nome: "",
+      tipo: "NACIONAL",
+      fornecedor: "",
+      status: "em producao",
+    });
     setMostrarModal(false);
   };
 
@@ -126,6 +134,7 @@ function GerenciarPecas() {
               </div>
 
               <p><strong>ID:</strong> {p.id}</p>
+              <p><strong>Fornecedor:</strong> {p.fornecedor || "Não informado"}</p>
               <p><strong>Status:</strong> {formatarStatus(p.status)}</p>
 
               <div className="acoes-peca">
@@ -141,7 +150,6 @@ function GerenciarPecas() {
         </div>
       </div>
 
-      {/* MODAL NOVA PEÇA */}
       {mostrarModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -177,6 +185,18 @@ function GerenciarPecas() {
               </div>
 
               <div className="form-group">
+                <label>Fornecedor</label>
+                <input
+                  type="text"
+                  name="fornecedor"
+                  value={novaPeca.fornecedor}
+                  onChange={handleChange}
+                  required
+                  placeholder="Ex: Embraer, MIG..."
+                />
+              </div>
+
+              <div className="form-group">
                 <label>Tipo</label>
                 <select
                   name="tipo"
@@ -205,7 +225,6 @@ function GerenciarPecas() {
         </div>
       )}
 
-      {/* MODAL ATUALIZAR STATUS */}
       {mostrarModalStatus && (
         <div className="modal-overlay">
           <div className="modal-content">

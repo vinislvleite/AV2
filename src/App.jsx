@@ -6,6 +6,7 @@ import GerenciarFuncionarios from "./pages/GerenciarFuncionarios";
 import GerenciarPecas from "./pages/GerenciarPecas";
 import MainLayout from "./components/Layout";
 import ProtectedRoute from "./components/protectedRoute";
+import GerenciarTestes from "./pages/gerenciarTestes";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/etapasProducao" element={<EtapasProducao />} />
           <Route path="/gerenciarFuncionarios" element={<GerenciarFuncionarios />} />
           <Route path="/gerenciarPecas" element={<GerenciarPecas />} />
+          <Route path="/gerenciarTestes" element={<GerenciarTestes />} />
         </Route>
       </Routes>
     </BrowserRouter>

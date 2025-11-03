@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
 import "../styles/gerenciarAeronaves.css";
 
 function GerenciarAeronaves() {
@@ -69,6 +70,88 @@ function GerenciarAeronaves() {
     handleAddAircraft(formData);
   };
 
+const gerarRelatorio = async (aeronave) => {
+  const pecas = JSON.parse(localStorage.getItem("pecas")) || [];
+  const etapas = JSON.parse(localStorage.getItem("etapas")) || [];
+  const testes = JSON.parse(localStorage.getItem("testes")) || [];
+  const dataAtual = new Date().toLocaleDateString("pt-BR");
+
+  let texto = `Relatório da Aeronave\n\n`;
+  texto += `Informações da aeronave:\n`;
+  texto += `• Código: ${aeronave.id || "N/A"}\n`;
+  texto += `• Modelo: ${aeronave.modelo || "N/A"}\n`;
+  texto += `• Tipo: ${aeronave.tipo || "N/A"}\n`;
+  texto += `• Capacidade: ${aeronave.capacidade || "N/A"} passageiros\n`;
+  texto += `• Alcance: ${aeronave.alcance || "N/A"} km\n\n`;
+
+  texto += `Peças usadas:\n`;
+  if (pecas.length > 0) {
+    pecas.forEach((p, i) => {
+      texto += `${i + 1}. ${p.nome} | Tipo: ${p.tipo} | Fornecedor: ${p.fornecedor} | Status: ${p.status}\n`;
+    });
+  } else {
+    texto += `Nenhuma peça registrada\n`;
+  }
+
+  texto += `\nEtapas de produção da aeronave:\n`;
+  if (etapas.length > 0) {
+    etapas.forEach((e, i) => {
+      texto += `${i + 1}. ${e.nome || "Etapa"} | Prazo: ${e.prazo || "N/A"} | Status: ${e.status || "N/A"}\n`;
+    });
+  } else {
+    texto += `Nenhuma etapa registrada\n`;
+  }
+
+  texto += `\nResultado dos testes:\n`;
+  if (testes.length > 0) {
+    testes.forEach((t, i) => {
+      texto += `${i + 1}. ${t.tipo} | Resultado: ${t.resultado}\n`;
+    });
+  } else {
+    texto += `Nenhum teste registrado\n`;
+  }
+
+  texto += `\nData de emissão: ${dataAtual}`;
+
+  const doc = new jsPDF();
+
+  let posicaoTexto = 55;
+
+  try {
+    const img = new Image();
+    img.src = "/AerocodePreto.png";
+
+    await new Promise((resolve, reject) => {
+      img.onload = resolve;
+      img.onerror = reject;
+    });
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const originalWidth = img.width;
+    const originalHeight = img.height;
+    const proporcao = originalHeight / originalWidth;
+
+    const imgWidth = 50;
+    const imgHeight = imgWidth * proporcao;
+
+    const x = (pageWidth - imgWidth) / 2;
+    doc.addImage(img, "PNG", x, 10, imgWidth, imgHeight);
+
+    posicaoTexto = 10 + imgHeight + 15;
+  } catch (error) {
+    console.warn("Não foi possível carregar o logo da Aerocode:", error);
+  }
+
+  doc.setFontSize(16);
+  doc.text("Relatório da Aeronave", 105, posicaoTexto, { align: "center" });
+
+  doc.setFontSize(12);
+  const linhas = doc.splitTextToSize(texto, 180);
+  doc.text(linhas, 10, posicaoTexto + 15, { maxWidth: 180, lineHeightFactor: 1.5 });
+
+  doc.save(`Relatorio_Aeronave_${aeronave.id || "N/A"}.pdf`);
+};
+
   return (
     <div className="aeronaves-container">
       <div className="aeronaves-header">
@@ -96,9 +179,7 @@ function GerenciarAeronaves() {
                 <h3 className="nome-aeronave">{a.modelo}</h3>
                 <span
                   className={`tipo-aeronave ${
-                    a.tipo === "MILITAR"
-                      ? "tipo-militar"
-                      : "tipo-comercial"
+                    a.tipo === "MILITAR" ? "tipo-militar" : "tipo-comercial"
                   }`}
                 >
                   {a.tipo}
@@ -115,13 +196,19 @@ function GerenciarAeronaves() {
                 <strong>Alcance:</strong> {a.alcance} km
               </p>
 
-              {/* Botão de excluir */}
               <div className="acoes-aeronave">
                 <button
                   className="button-excluir"
                   onClick={() => handleDeleteAircraft(a.id)}
                 >
                   Excluir
+                </button>
+                <button
+                  className="button-nova"
+                  style={{ marginLeft: "10px" }}
+                  onClick={() => gerarRelatorio(a)}
+                >
+                  Gerar Relatório
                 </button>
               </div>
             </div>
