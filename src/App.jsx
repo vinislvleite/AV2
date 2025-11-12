@@ -4,7 +4,7 @@ import GerenciarAeronaves from "./pages/gerenciarAeronaves";
 import EtapasProducao from "./pages/etapasProducao";
 import GerenciarFuncionarios from "./pages/gerenciarFuncionarios";
 import GerenciarPecas from "./pages/gerenciarPecas";
-import MainLayout from "./components/Layout";
+import MainLayout from "./components/layout";
 import ProtectedRoute from "./components/protectedRoute";
 import GerenciarTestes from "./pages/gerenciarTestes";
 
