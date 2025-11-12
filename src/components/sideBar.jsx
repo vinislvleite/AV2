@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import "../styles/sidebar.css";
+import "../styles/sideBar.css";
 
 function SideBar() {
   const [active, setActive] = useState("aeronaves");
